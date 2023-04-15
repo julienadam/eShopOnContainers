@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from "@angular/common/http";
+import { ApmModule, ApmService } from '@elastic/apm-rum-angular';
 
 import { routing } from './app.routes';
 import { AppService } from './app.service';
@@ -15,6 +16,7 @@ import { ToastrModule } from 'ngx-toastr';
 @NgModule({
     declarations: [AppComponent],
     imports: [
+        ApmModule,
         BrowserAnimationsModule,
         BrowserModule,
         ToastrModule.forRoot(),
@@ -27,8 +29,22 @@ import { ToastrModule } from 'ngx-toastr';
         BasketModule
     ],
     providers: [
+        ApmService,
         AppService
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+    constructor(service: ApmService) {
+        // Agent API is exposed through this apm instance
+        const apm = service.init({
+            serviceName: 'angular-app',
+            serverUrl: 'http://localhost:8200'
+        })
+
+        apm.setUserContext({
+            'username': 'foo',
+            'id': 'bar'
+        })
+    }
+}
