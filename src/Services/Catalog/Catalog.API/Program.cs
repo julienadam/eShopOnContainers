@@ -1,4 +1,6 @@
-﻿var appName = "Catalog.API";
+﻿using Elastic.Apm.NetCoreAll;
+
+var appName = "Catalog.API";
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions {
     Args = args,
     ApplicationName = typeof(Program).Assembly.FullName,
@@ -34,6 +36,8 @@ builder.Services.AddGrpc().Services
     .AddSwagger(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseAllElasticApm(builder.Configuration);
 
 if (app.Environment.IsDevelopment()) {
     app.UseDeveloperExceptionPage();

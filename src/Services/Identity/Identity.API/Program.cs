@@ -1,4 +1,6 @@
-﻿var appName = "Identity.API";
+﻿using Elastic.Apm.NetCoreAll;
+
+var appName = "Identity.API";
 var builder = WebApplication.CreateBuilder();
 
 if (builder.Configuration.GetValue<bool>("UseVault", false))
@@ -21,6 +23,9 @@ builder.AddCustomHealthChecks();
 builder.AddCustomApplicationServices();
 
 var app = builder.Build();
+
+app.UseAllElasticApm(builder.Configuration);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

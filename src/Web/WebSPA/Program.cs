@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Elastic.Apm.NetCoreAll;
+
+var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration);
@@ -49,6 +51,7 @@ builder.Host.UseSerilog((builderContext, config) =>
 .UseConsoleLifetime();
 
 var app = builder.Build();
+app.UseAllElasticApm(builder.Configuration);
 
 if (app.Environment.IsDevelopment())
 {

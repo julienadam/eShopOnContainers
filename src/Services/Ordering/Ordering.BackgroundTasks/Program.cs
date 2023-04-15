@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Ordering.BackgroundTasks.Extensions;
 using Serilog;
 using System.IO;
+using Elastic.Apm.NetCoreAll;
 
 namespace Ordering.BackgroundTasks
 {
@@ -30,6 +31,7 @@ namespace Ordering.BackgroundTasks
                     builder.AddCommandLine(args);
                 })
                 .ConfigureLogging((host, builder) => builder.UseSerilog(host.Configuration).AddSerilog())
+                .UseAllElasticApm()
                 .Build();
     }
 }

@@ -14,6 +14,8 @@ services:
       - "5340:80"
 
   sqldata:
+    labels:
+      - es.monitor.logs=true
     environment:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
@@ -23,22 +25,30 @@ services:
       - eshop-sqldata:/var/opt/mssql
 
   nosqldata:
+    labels:
+      - es.monitor.logs=true
     ports:
       - "27017:27017"
     volumes:
       - eshop-nosqldata:/data/db
 
   basketdata:
+    labels:
+      - es.monitor.logs=true
     ports:
       - "6379:6379"
     volumes:
       - eshop-basketdata:/data
   rabbitmq:
+    labels:
+      - es.monitor.logs=true
     ports:
       - "15672:15672"
       - "5672:5672"
 
   identity-api:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -55,10 +65,13 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5105:80"
 
   basket-api:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -75,11 +88,14 @@ services:
       - PATH_BASE=/basket-api
       - GRPC_PORT=81
       - PORT=80
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5103:80"
       - "9103:81"
 
   catalog-api:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionString=${ESHOP_AZURE_CATALOG_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.CatalogDb;User Id=sa;Password=Pass@word;Encrypt=False;TrustServerCertificate=true}
@@ -97,11 +113,14 @@ services:
       - GRPC_PORT=81
       - PORT=80
       - PATH_BASE=/catalog-api
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5101:80"
       - "9101:81"
 
   ordering-api:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -122,11 +141,14 @@ services:
       - PATH_BASE=/ordering-api
       - GRPC_PORT=81
       - PORT=80
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5102:80"
       - "9102:81"
 
   ordering-backgroundtasks:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -142,10 +164,13 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
       - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5111:80"
 
   payment-api:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -157,10 +182,13 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - Serilog__MinimumLevel__Override__payment-api.IntegrationEvents.EventHandling=Verbose
       - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5108:80"
 
   webhooks-api:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -170,10 +198,13 @@ services:
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
       - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5113:80"
 
   mobileshoppingapigw:
+    labels:
+      - es.monitor.logs=true
     volumes:
       - ./ApiGateways/Envoy/config/mobileshopping:/etc/envoy
     ports:
@@ -181,6 +212,8 @@ services:
     - "15200:8001"
 
   webshoppingapigw:
+    labels:
+      - es.monitor.logs=true
     volumes:
       - ./ApiGateways/Envoy/config/webshopping:/etc/envoy
     ports:
@@ -188,6 +221,8 @@ services:
     - "15202:8001"
 
   mobileshoppingagg:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - urls__basket=http://basket-api
@@ -203,10 +238,13 @@ services:
       - BasketUrlHC=http://basket-api/hc
       - PaymentUrlHC=http://payment-api/hc
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5120:80"
 
   webshoppingagg:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - urls__basket=http://basket-api
@@ -222,10 +260,13 @@ services:
       - BasketUrlHC=http://basket-api/hc
       - PaymentUrlHC=http://payment-api/hc
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5121:80"
 
   ordering-signalrhub:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -236,10 +277,13 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - identityUrl=http://identity-api
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5112:80"
 
   webstatus:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -267,10 +311,13 @@ services:
       - HealthChecksUI__HealthChecks__10__Uri=http://ordering-backgroundtasks/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5107:80"
 
   webspa:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -281,10 +328,13 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5104:80"
 
   webmvc:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -296,10 +346,13 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5100:80"
 
   webhooks-client:
+    labels:
+      - es.monitor.logs=true
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - Token=6168DB8D-DC58-4094-AF24-483278923590      # Webhooks are registered with this token (any value is valid) but the client won't check it
@@ -307,6 +360,7 @@ services:
       - CallBackUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
       - WebhooksUrl=http://webhooks-api
       - SelfUrl=http://webhooks-client/
+      - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5114:80"
 volumes:

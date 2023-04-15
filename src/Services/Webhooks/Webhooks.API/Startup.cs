@@ -1,4 +1,5 @@
 namespace Webhooks.API;
+using Elastic.Apm.NetCoreAll;
 public class Startup
 {
     public IConfiguration Configuration { get; }
@@ -42,6 +43,7 @@ public class Startup
             app.UsePathBase(pathBase);
         }
 
+        app.UseAllElasticApm(Configuration);
         app.UseRouting();
         app.UseCors("CorsPolicy");
         ConfigureAuth(app);

@@ -1,4 +1,7 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Elastic.Apm.NetCoreAll;
+using System.Configuration;
+
+var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 AddApplicationInsights(builder);
@@ -11,6 +14,7 @@ builder.WebHost.CaptureStartupErrors(false);
 builder.Host.UseSerilog(CreateSerilogLogger(builder.Configuration));
 
 var app = builder.Build();
+app.UseAllElasticApm(builder.Configuration);
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 if (app.Environment.IsDevelopment())
@@ -31,7 +35,6 @@ if (!string.IsNullOrEmpty(pathBase))
 
 app.UseStaticFiles();
 app.UseSession();
-
 WebContextSeed.Seed(app, app.Environment);
 
 // Fix samesite issue when running eShop from docker-compose locally as by default http protocol is being used

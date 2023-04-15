@@ -1,4 +1,5 @@
 ﻿using Autofac.Core;
+using Elastic.Apm.NetCoreAll;
 using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Configuration;
 
@@ -146,6 +147,8 @@ builder.WebHost.UseFailing(options => {
     options.NotFilteredPaths.AddRange(new[] { "/hc", "/liveness" });
 });
 var app = builder.Build();
+
+app.UseAllElasticApm(builder.Configuration);
 
 if (app.Environment.IsDevelopment()) {
     app.UseDeveloperExceptionPage();

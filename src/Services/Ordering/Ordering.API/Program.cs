@@ -1,4 +1,5 @@
 ﻿using Autofac.Core;
+using Elastic.Apm.NetCoreAll;
 using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -61,6 +62,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(conbuilder => conbuilder.RegisterModule(new MediatorModule()));
 builder.Host.ConfigureContainer<ContainerBuilder>(conbuilder => conbuilder.RegisterModule(new ApplicationModule(builder.Configuration["ConnectionString"])));
 var app = builder.Build();
+app.UseAllElasticApm(builder.Configuration);
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

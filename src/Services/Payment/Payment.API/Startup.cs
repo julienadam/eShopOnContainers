@@ -1,5 +1,7 @@
 namespace Microsoft.eShopOnContainers.Payment.API;
 
+using Elastic.Apm.NetCoreAll;
+
 public class Startup
 {
     public Startup(IConfiguration configuration)
@@ -79,6 +81,7 @@ public class Startup
 
         ConfigureEventBus(app);
 
+        app.UseAllElasticApm(Configuration);
         app.UseRouting();
         app.UseEndpoints(endpoints =>
         {

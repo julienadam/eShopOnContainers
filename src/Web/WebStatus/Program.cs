@@ -1,4 +1,6 @@
-﻿try
+﻿using Elastic.Apm.NetCoreAll;
+
+try
 {
     var builder = WebApplication.CreateBuilder(args);
     if (builder.Configuration.GetValue<bool>("UseVault", false))
@@ -23,6 +25,7 @@
         .AddInMemoryStorage();
 
     var app = builder.Build();
+    app.UseAllElasticApm(builder.Configuration);
 
     if (app.Environment.IsDevelopment())
     {
