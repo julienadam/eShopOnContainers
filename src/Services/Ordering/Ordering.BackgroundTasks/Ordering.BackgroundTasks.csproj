@@ -16,6 +16,8 @@
     <PackageReference Include="Autofac" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="Elastic.Apm.NetCoreAll" />
+    <PackageReference Include="Elastic.Apm.SerilogEnricher" />
+    <PackageReference Include="Elastic.CommonSchema.Serilog" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />

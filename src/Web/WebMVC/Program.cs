@@ -1,4 +1,6 @@
 ﻿using Elastic.Apm.NetCoreAll;
+using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,7 +71,8 @@ Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
         .ReadFrom.Configuration(configuration)
         .Enrich.WithProperty("ApplicationContext", AppName)
         .Enrich.FromLogContext()
-        .WriteTo.Console();
+        .Enrich.WithElasticApmCorrelationInfo()
+        .WriteTo.Console(formatter: new EcsTextFormatter());
     if (!string.IsNullOrWhiteSpace(seqServerUrl))
     {
         cfg.WriteTo.Seq(seqServerUrl);

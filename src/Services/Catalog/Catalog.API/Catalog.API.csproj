@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <PackageReference Include="Elastic.Apm.NetCoreAll" />
+    <PackageReference Include="Elastic.CommonSchema.Serilog" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" />

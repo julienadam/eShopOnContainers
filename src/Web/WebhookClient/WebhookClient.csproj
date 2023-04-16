@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Elastic.Apm.NetCoreAll" />
+    <PackageReference Include="Elastic.CommonSchema.Serilog" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />

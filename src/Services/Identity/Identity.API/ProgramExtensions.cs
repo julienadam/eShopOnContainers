@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
+using Serilog;
 
 namespace Microsoft.eShopOnContainers.Services.Identity.API;
 
@@ -20,8 +22,9 @@ public static class ProgramExtensions
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
         .Enrich.WithProperty("ApplicationContext", AppName)
+        .Enrich.WithElasticApmCorrelationInfo()
         .Enrich.FromLogContext()
-        .WriteTo.Console()
+        .WriteTo.Console(formatter: new EcsTextFormatter())
         .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
         .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://localhost:8080" : logstashUrl, null)
         .ReadFrom.Configuration(builder.Configuration)

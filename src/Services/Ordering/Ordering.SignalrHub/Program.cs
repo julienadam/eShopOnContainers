@@ -1,4 +1,7 @@
-﻿var configuration = GetConfiguration();
+﻿using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
+
+var configuration = GetConfiguration();
 
 Log.Logger = CreateSerilogLogger(configuration);
 
@@ -39,7 +42,8 @@ static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
         .MinimumLevel.Verbose()
         .Enrich.WithProperty("ApplicationContext", Program.AppName)
         .Enrich.FromLogContext()
-        .WriteTo.Console()
+        .Enrich.WithElasticApmCorrelationInfo()
+        .WriteTo.Console(formatter: new EcsTextFormatter())
         .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
         .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl, null)
         .ReadFrom.Configuration(configuration)

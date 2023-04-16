@@ -18,6 +18,8 @@
     <PackageReference Include="Duende.IdentityServer.Storage" />
     <PackageReference Include="Duende.IdentityServer" />
     <PackageReference Include="Elastic.Apm.NetCoreAll" />
+    <PackageReference Include="Elastic.Apm.SerilogEnricher" />
+    <PackageReference Include="Elastic.CommonSchema.Serilog" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
     <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector" />
     <PackageReference Include="Microsoft.ApplicationInsights.Kubernetes" />

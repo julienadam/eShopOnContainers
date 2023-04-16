@@ -1,4 +1,6 @@
 ﻿using Elastic.Apm.NetCoreAll;
+using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
 
 try
 {
@@ -72,7 +74,8 @@ Serilog.ILogger CreateLogger(IConfiguration configuration)
         .MinimumLevel.Verbose()
         .Enrich.WithProperty("ApplicationContext", Program.AppName)
         .Enrich.FromLogContext()
-        .WriteTo.Console()
+        .Enrich.WithElasticApmCorrelationInfo()
+        .WriteTo.Console(formatter: new EcsTextFormatter())
         .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
         .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl, null)
         .ReadFrom.Configuration(configuration)

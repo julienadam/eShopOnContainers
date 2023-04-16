@@ -45,6 +45,8 @@
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="Elastic.Apm.NetCoreAll" />
+    <PackageReference Include="Elastic.Apm.SerilogEnricher" />
+    <PackageReference Include="Elastic.CommonSchema.Serilog" />
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="Google.Protobuf" />
     <PackageReference Include="Grpc.AspNetCore.Server" />

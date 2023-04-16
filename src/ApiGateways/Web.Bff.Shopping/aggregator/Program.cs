@@ -1,3 +1,6 @@
+using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
+
 await ﻿BuildWebHost(args).RunAsync();
 
 IWebHost BuildWebHost(string[] args) =>
@@ -19,6 +22,7 @@ IWebHost BuildWebHost(string[] args) =>
             config
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
-                .WriteTo.Console();
+                .Enrich.WithElasticApmCorrelationInfo()
+                .WriteTo.Console(formatter: new EcsTextFormatter());
         })
         .Build();

@@ -1,4 +1,6 @@
 ﻿using Elastic.Apm.NetCoreAll;
+using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
@@ -46,7 +48,8 @@ builder.Host.UseSerilog((builderContext, config) =>
         .Enrich.FromLogContext()
         .WriteTo.Seq("http://seq")
         .ReadFrom.Configuration(builderContext.Configuration)
-        .WriteTo.Console();
+        .Enrich.WithElasticApmCorrelationInfo()
+        .WriteTo.Console(formatter: new EcsTextFormatter());
 })
 .UseConsoleLifetime();
 

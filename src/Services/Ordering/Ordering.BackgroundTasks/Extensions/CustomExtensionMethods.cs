@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
@@ -130,7 +132,8 @@ namespace Ordering.BackgroundTasks.Extensions
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("ApplicationContext", Program.AppName)
                 .Enrich.FromLogContext()
-                .WriteTo.Console()
+                .Enrich.WithElasticApmCorrelationInfo()
+                .WriteTo.Console(formatter: new EcsTextFormatter())
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
                 .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl,null)
                 .ReadFrom.Configuration(configuration)

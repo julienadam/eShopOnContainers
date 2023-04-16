@@ -1,5 +1,7 @@
 ﻿using Autofac.Core;
 using Elastic.Apm.NetCoreAll;
+using Elastic.Apm.SerilogEnricher;
+using Elastic.CommonSchema.Serilog;
 using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -162,7 +164,8 @@ Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
         .MinimumLevel.Verbose()
         .Enrich.WithProperty("ApplicationContext", Program.AppName)
         .Enrich.FromLogContext()
-        .WriteTo.Console()
+        .Enrich.WithElasticApmCorrelationInfo()
+        .WriteTo.Console(formatter: new EcsTextFormatter())
         .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
         .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl, null)
         .ReadFrom.Configuration(configuration)
