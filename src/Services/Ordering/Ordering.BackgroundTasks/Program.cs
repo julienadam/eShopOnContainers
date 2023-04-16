@@ -31,7 +31,7 @@ namespace Ordering.BackgroundTasks
                     builder.AddCommandLine(args);
                 })
                 .ConfigureLogging((host, builder) => builder.UseSerilog(host.Configuration).AddSerilog())
-                .UseAllElasticApm()
+                //.UseAllElasticApm()
                 .Build();
     }
 }

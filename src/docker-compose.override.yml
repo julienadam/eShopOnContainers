@@ -142,6 +142,7 @@ services:
       - GRPC_PORT=81
       - PORT=80
       - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
+      - ELASTIC_APM_SERVER_URL=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5102:80"
       - "9102:81"
@@ -165,6 +166,7 @@ services:
       - UseLoadTest=${USE_LOADTEST:-False}
       - Serilog__MinimumLevel__Override__Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ=Verbose
       - ElasticApm:ServerUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
+      - ELASTIC_APM_SERVER_URL=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8200
     ports:
       - "5111:80"
 

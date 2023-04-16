@@ -62,7 +62,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(conbuilder => conbuilder.RegisterModule(new MediatorModule()));
 builder.Host.ConfigureContainer<ContainerBuilder>(conbuilder => conbuilder.RegisterModule(new ApplicationModule(builder.Configuration["ConnectionString"])));
 var app = builder.Build();
-app.UseAllElasticApm(builder.Configuration);
+// app.UseAllElasticApm(builder.Configuration);
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

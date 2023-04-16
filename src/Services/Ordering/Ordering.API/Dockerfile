@@ -45,10 +45,16 @@ COPY "Directory.Packages.props" "Directory.Packages.props"
 COPY "NuGet.config" "NuGet.config"
 
 RUN dotnet restore "eShopOnContainers-ServicesAndWebApps.sln"
-
 COPY . .
 WORKDIR /src/Services/Ordering/Ordering.API
 RUN dotnet publish --no-restore -c Release -o /app
+
+ARG AGENT_VERSION=1.21.0
+workdir /source
+# install unzip
+RUN apt-get -y update && apt-get -yq install unzip
+RUN curl -L -o elastic_apm_profiler_${AGENT_VERSION}.zip https://github.com/elastic/apm-agent-dotnet/releases/download/v${AGENT_VERSION}/elastic_apm_profiler_${AGENT_VERSION}-linux-x64.zip
+RUN unzip elastic_apm_profiler_${AGENT_VERSION}.zip -d /elastic_apm_profiler_${AGENT_VERSION}
 
 FROM build as unittest
 WORKDIR /src/Services/Ordering/Ordering.UnitTests
@@ -60,5 +66,16 @@ FROM build AS publish
 
 FROM base AS final
 WORKDIR /app
+ARG AGENT_VERSION=1.21.0
+COPY --from=build /elastic_apm_profiler_${AGENT_VERSION} /elastic_apm_profiler
+ENV CORECLR_ENABLE_PROFILING=1
+ENV CORECLR_PROFILER={FA65FE15-F085-4681-9B20-95E04F6C03CC}
+ENV CORECLR_PROFILER_PATH=/elastic_apm_profiler/libelastic_apm_profiler.so
+ENV ELASTIC_APM_PROFILER_HOME=/elastic_apm_profiler
+ENV ELASTIC_APM_PROFILER_INTEGRATIONS=/elastic_apm_profiler/integrations.yml
+ENV ELASTIC_APM_PROFILER_LOG_DIR="/elastic_apm_profiler/logs"
+ENV ELASTIC_APM_PROFILER_LOG="debug"
+ENV ELASTIC_APM_PROFILER_LOG_IL="1"
+env ELASTIC_APM_SERVER_URL=http://localhost:8200
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Ordering.API.dll"]
