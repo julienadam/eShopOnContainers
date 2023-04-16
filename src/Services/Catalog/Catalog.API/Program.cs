@@ -14,7 +14,11 @@ if (builder.Configuration.GetValue<bool>("UseVault", false)) {
         builder.Configuration["Vault:ClientSecret"]);
     //builder.AddAzureKeyVault(new Uri($"https://{builder.Configuration["Vault:Name"]}.vault.azure.net/"), credential);        
 }
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+builder.Configuration
+   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+   .AddEnvironmentVariables();
+
 builder.WebHost.UseKestrel(options => {
     var ports = GetDefinedPorts(builder.Configuration);
     options.Listen(IPAddress.Any, ports.httpPort, listenOptions => {
