@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnContainers.Mobile.Shopping.HttpAggregator;
+﻿using Elastic.Apm.NetCoreAll;
+
+namespace Microsoft.eShopOnContainers.Mobile.Shopping.HttpAggregator;
 
 public class Startup
 {
@@ -30,7 +32,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
     {
         var pathBase = Configuration["PATH_BASE"];
-
+        app.UseAllElasticApm(Configuration);
         if (!string.IsNullOrEmpty(pathBase))
         {
             loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
